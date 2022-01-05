@@ -96,6 +96,9 @@ dependencies {
     //UI Automator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
+    //RecyclerView
+    debugImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
+
     //Fragment
     debugImplementation 'androidx.fragment:fragment-testing:1.4.0'
 }
