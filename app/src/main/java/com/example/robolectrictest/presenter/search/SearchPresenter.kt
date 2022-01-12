@@ -1,7 +1,6 @@
 package com.example.robolectrictest.presenter.search
 
 import com.example.robolectrictest.model.SearchResponse
-import com.example.robolectrictest.presenter.PresenterContract
 import com.example.robolectrictest.repository.GitHubRepository
 import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.search.ViewSearchContract
@@ -27,7 +26,7 @@ internal class SearchPresenter internal constructor(
         repository.searchGithub(searchQuery, this)
     }
 
-    override fun onAttach(viewAttach: ViewContract) {
+    override fun onAttach(viewAttach: ViewContract?) {
         if (view != viewAttach) {
             view = viewAttach
         }

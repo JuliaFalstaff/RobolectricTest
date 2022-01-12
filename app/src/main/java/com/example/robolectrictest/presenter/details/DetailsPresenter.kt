@@ -1,6 +1,5 @@
 package com.example.robolectrictest.presenter.details
 
-import com.example.robolectrictest.presenter.PresenterContract
 import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.details.ViewDetailsContract
 
@@ -26,7 +25,7 @@ internal class DetailsPresenter internal constructor(
         viewContract.setCount(count)
     }
 
-    override fun onAttach(viewAttach: ViewContract) {
+    override fun onAttach(viewAttach: ViewContract?) {
         if (view != viewAttach) {
             view = viewAttach
         }
