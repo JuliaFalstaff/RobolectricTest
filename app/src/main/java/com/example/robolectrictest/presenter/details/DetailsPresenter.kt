@@ -1,5 +1,7 @@
 package com.example.robolectrictest.presenter.details
 
+import com.example.robolectrictest.presenter.PresenterContract
+import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.details.ViewDetailsContract
 
 
@@ -7,6 +9,8 @@ internal class DetailsPresenter internal constructor(
         private val viewContract: ViewDetailsContract,
         private var count: Int = 0
 ) : PresenterDetailsContract {
+
+    private var view: ViewContract? = null
 
     override fun setCounter(count: Int) {
         this.count = count
@@ -20,5 +24,15 @@ internal class DetailsPresenter internal constructor(
     override fun onDecrement() {
         count--
         viewContract.setCount(count)
+    }
+
+    override fun onAttach(viewAttach: ViewContract) {
+        if (view != viewAttach) {
+            view = viewAttach
+        }
+    }
+
+    override fun onDetach() {
+        view = null
     }
 }

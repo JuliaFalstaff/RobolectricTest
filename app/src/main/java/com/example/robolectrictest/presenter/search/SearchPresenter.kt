@@ -1,7 +1,9 @@
 package com.example.robolectrictest.presenter.search
 
 import com.example.robolectrictest.model.SearchResponse
+import com.example.robolectrictest.presenter.PresenterContract
 import com.example.robolectrictest.repository.GitHubRepository
+import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.search.ViewSearchContract
 import retrofit2.Response
 
@@ -18,9 +20,21 @@ internal class SearchPresenter internal constructor(
         private val repository: GitHubRepository,
 ) : PresenterSearchContract, GitHubRepository.GitHubRepositoryCallback {
 
+    private var view: ViewContract? = null
+
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)
         repository.searchGithub(searchQuery, this)
+    }
+
+    override fun onAttach(viewAttach: ViewContract) {
+        if (view != viewAttach) {
+            view = viewAttach
+        }
+    }
+
+    override fun onDetach() {
+        view = null
     }
 
     override fun handleGitHubResponse(response: Response<SearchResponse?>?) {
