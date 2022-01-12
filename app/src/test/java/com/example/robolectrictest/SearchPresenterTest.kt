@@ -44,7 +44,7 @@ class SearchPresenterTest {
     }
 
     @Test
-    fun onAttach_Test() {
+    fun onAttach_Test_NotSameView() {
         presenter.onAttach(view)
         assertNotSame(viewContract, view)
     }
