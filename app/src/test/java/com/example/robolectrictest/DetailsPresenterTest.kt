@@ -3,6 +3,7 @@ package com.example.robolectrictest
 import com.example.robolectrictest.presenter.details.DetailsPresenter
 import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.details.ViewDetailsContract
+import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import junit.framework.Assert.*
@@ -15,7 +16,6 @@ class DetailsPresenterTest {
 
     private lateinit var presenter: DetailsPresenter
 
-    private var view: ViewContract? = null
 
     @Mock
     private lateinit var viewContract: ViewDetailsContract
@@ -47,31 +47,16 @@ class DetailsPresenterTest {
     }
 
     @Test
-    fun onAttach_Test_NotSameView() {
-        presenter.onAttach(view)
-        assertNotSame(viewContract, view)
-    }
-
-    @Test
-    fun onAttach_Test_Attached() {
-        presenter.onAttach(view)
-        view = viewContract
-        assertEquals(viewContract, view)
-    }
-
-    @Test
     fun onAttach_Test_ViewNotNull() {
-        presenter.onAttach(view)
-        view = viewContract
-        assertNotNull(view)
+        presenter.onAttach(mock())
+        assertNotNull(presenter.getView())
     }
 
     @Test
     fun onDetach_Test() {
-        presenter.onAttach(view)
-        view = viewContract
+        presenter.onAttach(mock())
+        assertNotNull(presenter.getView())
         presenter.onDetach()
-        view = null
-        assertNull(view)
-            }
+        assertNull(presenter.getView())
+    }
 }

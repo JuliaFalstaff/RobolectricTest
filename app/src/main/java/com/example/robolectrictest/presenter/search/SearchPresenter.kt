@@ -21,14 +21,16 @@ internal class SearchPresenter internal constructor(
 
     private var view: ViewContract? = null
 
+    fun getView() = view
+
     override fun searchGitHub(searchQuery: String) {
         viewContract.displayLoading(true)
         repository.searchGithub(searchQuery, this)
     }
 
-    override fun onAttach(viewAttach: ViewContract?) {
-        if (view != viewAttach) {
-            view = viewAttach
+    override fun onAttach(view: ViewContract?) {
+        if (this.view != view) {
+            this.view = view
         }
     }
 

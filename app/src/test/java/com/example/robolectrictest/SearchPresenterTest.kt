@@ -4,6 +4,7 @@ import com.example.robolectrictest.presenter.search.SearchPresenter
 import com.example.robolectrictest.repository.GitHubRepository
 import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.search.ViewSearchContract
+import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import junit.framework.Assert.*
@@ -15,8 +16,6 @@ import org.mockito.MockitoAnnotations
 
 class SearchPresenterTest {
     private lateinit var presenter: SearchPresenter
-
-    private var view: ViewContract? = null
 
     @Mock
     private lateinit var repository: GitHubRepository
@@ -44,31 +43,16 @@ class SearchPresenterTest {
     }
 
     @Test
-    fun onAttach_Test_NotSameView() {
-        presenter.onAttach(view)
-        assertNotSame(viewContract, view)
-    }
-
-    @Test
-    fun onAttach_Test_Attached() {
-        presenter.onAttach(view)
-        view = viewContract
-        assertEquals(viewContract, view)
-    }
-
-    @Test
     fun onAttach_Test_ViewNotNull() {
-        presenter.onAttach(view)
-        view = viewContract
-        assertNotNull(view)
+        presenter.onAttach(mock())
+        assertNotNull(presenter.getView())
     }
 
     @Test
     fun onDetach_Test() {
-        presenter.onAttach(view)
-        view = viewContract
+        presenter.onAttach(mock())
+        assertNotNull(presenter.getView())
         presenter.onDetach()
-        view = null
-        assertNull(view)
+        assertNull(presenter.getView())
     }
 }
