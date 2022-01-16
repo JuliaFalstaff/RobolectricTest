@@ -82,14 +82,14 @@ class MainActivityEspressoTest {
             onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 42")))
         } else {
             onView(isRoot()).perform(delay())
-            onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2805")))
+            onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2806")))
         }
     }
 
     private fun delay(): ViewAction? {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> = isRoot()
-            override fun getDescription(): String = "wait for $2 seconds"
+            override fun getDescription(): String = "wait for $3 seconds"
 
             override fun perform(uiController: UiController?, view: View?) {
                 uiController?.loopMainThreadForAtLeast(3000)
