@@ -41,5 +41,4 @@ class OpenOtherAppsTest {
         val settingsValidation = uiDevice.findObject(UiSelector().packageName("com.android.settings"))
         Assert.assertTrue(settingsValidation.exists())
     }
-
 }

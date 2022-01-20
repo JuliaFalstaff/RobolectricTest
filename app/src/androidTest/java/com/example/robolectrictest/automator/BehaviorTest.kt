@@ -64,6 +64,14 @@ class BehaviorTest {
     }
 
     @Test
+    fun test_ButtonsMainActivity_NotNull() {
+        val searchButton = uiDevice.findObject(By.res(packageName, "searchButton"))
+        val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        Assert.assertNotNull(searchButton)
+        Assert.assertNotNull(toDetails)
+    }
+
+    @Test
     fun test_OpenDetailsScreen() {
         //Находим кнопку
         val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
@@ -99,7 +107,48 @@ class BehaviorTest {
         Assert.assertEquals(detailsActivityText.text, "Number of results: 696")
     }
 
+    @Test
+    fun test_ButtonIsIncrementing() {
+        val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
+        val detailsActivityText =
+            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
+        Assert.assertEquals(detailsActivityText.text, "Number of results: 0")
+
+        val toIncrementingButton = uiDevice.findObject(By.res(packageName, "incrementButton"))
+        toIncrementingButton.click()
+        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+        Assert.assertEquals(changedTextView.text.toString(), "Number of results: 1")
+    }
+
+    @Test
+    fun test_ButtonIsDecrementing() {
+        val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
+        val detailsActivityText =
+            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
+        Assert.assertEquals(detailsActivityText.text, "Number of results: 0")
+
+        val toDecrementingButton = uiDevice.findObject(By.res(packageName, "decrementButton"))
+        toDecrementingButton.click()
+        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+        Assert.assertEquals(changedTextView.text.toString(), "Number of results: -1")
+    }
+
+    @Test
+    fun test_ButtonsDetailsActivity_NotNull() {
+        val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
+        toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
+        val detailsActivityText =
+            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
+        val toDecrementingButton = uiDevice.findObject(By.res(packageName, "decrementButton"))
+        val toIncrementingButton = uiDevice.findObject(By.res(packageName, "incrementButton"))
+        Assert.assertNotNull(toIncrementingButton)
+        Assert.assertNotNull(toDecrementingButton)
+        Assert.assertNotNull(detailsActivityText)
+    }
+
     companion object {
-        private const val TIMEOUT = 5000L
+        private const val TIMEOUT = 10000L
     }
 }
