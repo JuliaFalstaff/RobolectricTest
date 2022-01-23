@@ -1,7 +1,6 @@
 package com.example.robolectrictest
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.widget.Button
@@ -57,7 +56,7 @@ class DetailsActivityTest {
     fun activityTextView_HasText() {
         scenario.onActivity {
             val totalCountTextView = it.findViewById<TextView>(R.id.totalCountTextView)
-            assertEquals("Number of results: 0", totalCountTextView.text)
+            assertEquals(TEST_NUMBER_OF_RESULTS_ZERO, totalCountTextView.text)
         }
     }
 
@@ -85,7 +84,7 @@ class DetailsActivityTest {
             val incrementButton = it.findViewById<Button>(R.id.incrementButton)
             val totalCountTextView = it.findViewById<TextView>(R.id.totalCountTextView)
             incrementButton.performClick()
-            assertEquals("Number of results: 1", totalCountTextView.text)
+            assertEquals(TEST_NUMBER_OF_RESULTS_PLUS_1, totalCountTextView.text)
         }
     }
 
@@ -95,14 +94,14 @@ class DetailsActivityTest {
             val decrementButton = it.findViewById<Button>(R.id.decrementButton)
             val totalCountTextView = it.findViewById<TextView>(R.id.totalCountTextView)
             decrementButton.performClick()
-            assertEquals("Number of results: -1", totalCountTextView.text)
+            assertEquals(TEST_NUMBER_OF_RESULTS_MINUS_1, totalCountTextView.text)
         }
     }
 
     @Test
     fun activityCreateIntent_NotNull() {
         val context: Context = ApplicationProvider.getApplicationContext()
-        val intent = DetailsActivity.getIntent(context, 0)
+        val intent = DetailsActivity.getIntent(context, DEFAULT_NUMBER_ZERO)
         assertNotNull(intent)
     }
 
@@ -110,21 +109,23 @@ class DetailsActivityTest {
     @Test
     fun activityCreateIntent_HasExtras() {
         val context: Context = ApplicationProvider.getApplicationContext()
-        val intent = DetailsActivity.getIntent(context, 0)
+        val intent = DetailsActivity.getIntent(context, DEFAULT_NUMBER_ZERO)
         val bundle = intent.extras
         assertNotNull(bundle)
     }
 
     @Test
     fun activityCreateIntent_HasCount() {
-        val count = 42
         val context: Context = ApplicationProvider.getApplicationContext()
-        val intent = DetailsActivity.getIntent(context, count)
+        val intent = DetailsActivity.getIntent(context, TEST_FAKE_NUMBER)
         val bundle = intent.extras
-        assertEquals(count, bundle?.getInt(DetailsActivity.TOTAL_COUNT_EXTRA, 0))
+        assertEquals(
+            TEST_FAKE_NUMBER,
+            bundle?.getInt(DetailsActivity.TOTAL_COUNT_EXTRA, DEFAULT_NUMBER_ZERO)
+        )
     }
 
-        @After
+    @After
     fun close() {
         scenario.close()
     }

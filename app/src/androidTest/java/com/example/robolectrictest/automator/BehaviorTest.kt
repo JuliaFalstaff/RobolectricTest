@@ -9,6 +9,11 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.example.robolectrictest.*
+import com.example.robolectrictest.TEST_NUMBER_OF_RESULTS_MINUS_1
+import com.example.robolectrictest.TEST_NUMBER_OF_RESULTS_PLUS_1
+import com.example.robolectrictest.TEST_NUMBER_OF_RESULTS_ZERO
+import com.example.robolectrictest.TIMEOUT
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -57,7 +62,7 @@ class BehaviorTest {
         //Ожидаем конкретного события: появления текстового поля totalCountTextView.
         //Это будет означать, что сервер вернул ответ с какими-то данными, то есть запрос отработал.
         val changedText =
-            uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+            uiDevice.wait(Until.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT)), TIMEOUT)
         //Убеждаемся, что сервер вернул корректный результат. Обратите внимание, что количество
         //результатов может варьироваться во времени, потому что количество репозиториев постоянно меняется.
         Assert.assertEquals(changedText.text.toString(), "Number of results: 696")
@@ -81,14 +86,14 @@ class BehaviorTest {
         //Ожидаем конкретного события: появления текстового поля totalCountTextView.
         //Это будет означать, что DetailsScreen открылся и это поле видно на экране.
         val changedText =
-            uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+            uiDevice.wait(Until.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT)), TIMEOUT)
 
         //Убеждаемся, что поле видно и содержит предполагаемый текст.
         //Обратите внимание, что текст должен быть "Number of results: 0",
         //так как мы кликаем по кнопке не отправляя никаких поисковых запросов.
         //Чтобы проверить отображение определенного количества репозиториев,
         //вам в одном и том же методе нужно отправить запрос на сервер и открыть DetailsScreen.
-        Assert.assertEquals(changedText.text, "Number of results: 0")
+        Assert.assertEquals(changedText.text, TEST_NUMBER_OF_RESULTS_ZERO)
     }
 
     @Test
@@ -98,12 +103,12 @@ class BehaviorTest {
         val searchButton = uiDevice.findObject(By.res(packageName, "searchButton"))
         searchButton.click()
         val changedText =
-            uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
+            uiDevice.wait(Until.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT)), TIMEOUT)
         Assert.assertEquals(changedText.text, "Number of results: 696")
         val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
         toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
         val detailsActivityText =
-            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
+            uiDevice.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT))
         Assert.assertEquals(detailsActivityText.text, "Number of results: 696")
     }
 
@@ -112,13 +117,13 @@ class BehaviorTest {
         val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
         toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
         val detailsActivityText =
-            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
-        Assert.assertEquals(detailsActivityText.text, "Number of results: 0")
+            uiDevice.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT))
+        Assert.assertEquals(detailsActivityText.text, TEST_NUMBER_OF_RESULTS_ZERO)
 
         val toIncrementingButton = uiDevice.findObject(By.res(packageName, "incrementButton"))
         toIncrementingButton.click()
-        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
-        Assert.assertEquals(changedTextView.text.toString(), "Number of results: 1")
+        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT)), TIMEOUT)
+        Assert.assertEquals(changedTextView.text.toString(), TEST_NUMBER_OF_RESULTS_PLUS_1)
     }
 
     @Test
@@ -126,13 +131,13 @@ class BehaviorTest {
         val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
         toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
         val detailsActivityText =
-            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
-        Assert.assertEquals(detailsActivityText.text, "Number of results: 0")
+            uiDevice.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT))
+        Assert.assertEquals(detailsActivityText.text, TEST_NUMBER_OF_RESULTS_ZERO)
 
         val toDecrementingButton = uiDevice.findObject(By.res(packageName, "decrementButton"))
         toDecrementingButton.click()
-        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, "totalCountTextView")), TIMEOUT)
-        Assert.assertEquals(changedTextView.text.toString(), "Number of results: -1")
+        val changedTextView = uiDevice.wait(Until.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT)), TIMEOUT)
+        Assert.assertEquals(changedTextView.text.toString(), TEST_NUMBER_OF_RESULTS_MINUS_1)
     }
 
     @Test
@@ -140,15 +145,11 @@ class BehaviorTest {
         val toDetails = uiDevice.findObject(By.res(packageName, "toDetailsActivityButton"))
         toDetails.clickAndWait(Until.newWindow(), TIMEOUT)
         val detailsActivityText =
-            uiDevice.findObject(By.res(packageName, "totalCountTextView"))
+            uiDevice.findObject(By.res(packageName, TEXT_OF_TEXTVIEW_TOTAL_COUNT))
         val toDecrementingButton = uiDevice.findObject(By.res(packageName, "decrementButton"))
         val toIncrementingButton = uiDevice.findObject(By.res(packageName, "incrementButton"))
         Assert.assertNotNull(toIncrementingButton)
         Assert.assertNotNull(toDecrementingButton)
         Assert.assertNotNull(detailsActivityText)
-    }
-
-    companion object {
-        private const val TIMEOUT = 10000L
     }
 }

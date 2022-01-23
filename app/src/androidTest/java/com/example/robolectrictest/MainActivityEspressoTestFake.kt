@@ -56,7 +56,7 @@ class MainActivityEspressoTestFake {
 
     @Test
     fun activityTextView_HasText() {
-        onView(withId(R.id.toDetailsActivityButton)).check(matches(withText("to details")))
+        onView(withId(R.id.toDetailsActivityButton)).check(matches(withText(TEXT_OF_BUTTON_TO_DETAILS)))
     }
 
     @Test
@@ -79,7 +79,6 @@ class MainActivityEspressoTestFake {
         onView(withId(R.id.searchEditText)).perform(click())
         onView(withId(R.id.searchEditText)).perform(replaceText("algol"), closeSoftKeyboard())
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
-        onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 42")))
-
+        onView(withId(R.id.totalCountTextView)).check(matches(withText(TEST_NUMBER_OF_RESULTS_42)))
     }
 }
