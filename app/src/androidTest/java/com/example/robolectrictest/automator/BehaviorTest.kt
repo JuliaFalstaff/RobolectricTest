@@ -29,7 +29,7 @@ class BehaviorTest {
         //Запускаем наше приложение
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         //Мы уже проверяли Интент на null в предыдущем тесте, поэтому допускаем, что Интент у нас не null
-        intent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         context.startActivity(intent)
 
         //Ждем, когда приложение откроется на смартфоне чтобы начать тестировать его элементы

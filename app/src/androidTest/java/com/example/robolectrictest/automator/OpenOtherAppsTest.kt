@@ -38,7 +38,7 @@ class OpenOtherAppsTest {
             appViews.getChildByText(UiSelector().className(TextView::class.java.name), "Settings")
         settingsApp.clickAndWaitForNewWindow()
         //Убеждаемся, что Настройки открыты
-        val settingsValidation = uiDevice.findObject(UiSelector().packageName("com.android.settings"))
+        val settingsValidation = uiDevice.findObject(UiSelector().packageName("com. android.settings"))
         Assert.assertTrue(settingsValidation.exists())
     }
 }
