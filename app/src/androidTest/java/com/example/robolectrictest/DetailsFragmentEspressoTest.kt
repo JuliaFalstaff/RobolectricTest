@@ -9,10 +9,11 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.robolectrictest.view.details.DetailsFragment
+import junit.framework.TestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,24 +29,31 @@ class DetailsFragmentEspressoTest {
     }
 
     @Test
+    fun fragment_testAssertNotNull() {
+        scenario.onFragment {
+            TestCase.assertNotNull(it)
+        }
+    }
+
+    @Test
     fun fragment_testBundle() {
         //Можно передавать аргументы во Фрагмент, но это необязательно
-        val fragmentArgs = bundleOf("TOTAL_COUNT_EXTRA" to 10)
+        val fragmentArgs = bundleOf("TOTAL_COUNT_EXTRA" to TEST_FAKE_NUMBER_42)
         //Создаем новый сценарий с аргументами и Запускаем Fragment с аргументами
         val scenario = launchFragmentInContainer<DetailsFragment>(fragmentArgs)
         //Возможность менять стейт Фрагмента
         scenario.moveToState(Lifecycle.State.RESUMED)
 
-        val assertion: ViewAssertion = ViewAssertions.matches(withText("Number of results: 10"))
+        val assertion: ViewAssertion = ViewAssertions.matches(withText(TEST_NUMBER_OF_RESULTS_42))
         onView(withId(R.id.totalCountTextView)).check(assertion)
     }
 
     @Test
     fun fragment_testSetCountMethod() {
         scenario.onFragment {
-            it.setCount(10)
+            it.setCount(TEST_FAKE_NUMBER_42)
         }
-        val assertion = matches(withText("Number of results: 10"))
+        val assertion = matches(withText(TEST_NUMBER_OF_RESULTS_42))
         onView(withId(R.id.totalCountTextView)).check(assertion)
     }
 
@@ -58,7 +66,28 @@ class DetailsFragmentEspressoTest {
     @Test
     fun fragment_testDecrementButton() {
         onView(withId(R.id.decrementButton)).perform(click())
-        onView(withId(R.id.totalCountTextView)).check(matches(withText(TEST_NUMBER_OF_RESULTS_MINUS_1)))
+        onView(withId(R.id.totalCountTextView)).check(
+            matches(
+                withText(
+                    TEST_NUMBER_OF_RESULTS_MINUS_1
+                )
+            )
+        )
     }
 
+    @Test
+    fun fragment_buttonsAreEffectiveVisible() {
+        onView(withId(R.id.incrementButton)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.decrementButton)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
+    @Test
+    fun fragment_textViewIsCompletelyVisible() {
+        onView(withId(R.id.totalCountTextView)).check(matches(isCompletelyDisplayed()))
+    }
+
+    @After
+    fun close() {
+        scenario.close()
+    }
 }

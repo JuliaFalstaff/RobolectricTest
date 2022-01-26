@@ -117,10 +117,10 @@ class DetailsActivityTest {
     @Test
     fun activityCreateIntent_HasCount() {
         val context: Context = ApplicationProvider.getApplicationContext()
-        val intent = DetailsActivity.getIntent(context, TEST_FAKE_NUMBER)
+        val intent = DetailsActivity.getIntent(context, TEST_FAKE_NUMBER_42)
         val bundle = intent.extras
         assertEquals(
-            TEST_FAKE_NUMBER,
+            TEST_FAKE_NUMBER_42,
             bundle?.getInt(DetailsActivity.TOTAL_COUNT_EXTRA, DEFAULT_NUMBER_ZERO)
         )
     }
