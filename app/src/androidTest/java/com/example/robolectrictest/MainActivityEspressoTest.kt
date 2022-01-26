@@ -54,7 +54,7 @@ class MainActivityEspressoTest {
 
     @Test
     fun activityTextView_HasText() {
-        onView(withId(R.id.toDetailsActivityButton)).check(matches(withText("to details")))
+        onView(withId(R.id.toDetailsActivityButton)).check(matches(withText(TEXT_OF_BUTTON_TO_DETAILS)))
     }
 
     @Test
