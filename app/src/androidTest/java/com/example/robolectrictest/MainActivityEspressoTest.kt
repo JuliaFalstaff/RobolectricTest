@@ -78,16 +78,16 @@ class MainActivityEspressoTest {
         onView(withId(R.id.searchEditText)).perform(replaceText("algol"), closeSoftKeyboard())
         onView(withId(R.id.searchEditText)).perform(pressImeActionButton())
         onView(isRoot()).perform(delay())
-        onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2806")))
+        onView(withId(R.id.totalCountTextView)).check(matches(withText("Number of results: 2825")))
     }
 
     private fun delay(): ViewAction? {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> = isRoot()
-            override fun getDescription(): String = "wait for $3 seconds"
+            override fun getDescription(): String = "wait for $10 seconds"
 
             override fun perform(uiController: UiController?, view: View?) {
-                uiController?.loopMainThreadForAtLeast(3000)
+                uiController?.loopMainThreadForAtLeast(10000)
             }
         }
     }
