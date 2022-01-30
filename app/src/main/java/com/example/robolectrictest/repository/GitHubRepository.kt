@@ -1,6 +1,7 @@
 package com.example.robolectrictest.repository
 
 import com.example.robolectrictest.model.SearchResponse
+import com.example.robolectrictest.presenter.RepositoryContract
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

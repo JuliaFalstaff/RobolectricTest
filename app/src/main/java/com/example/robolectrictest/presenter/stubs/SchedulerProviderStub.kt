@@ -1,4 +1,4 @@
-package com.example.robolectrictest.stubs
+package com.example.robolectrictest.presenter.stubs
 
 import com.example.robolectrictest.scheduler.ISchedulerProvider
 import io.reactivex.Scheduler

@@ -2,6 +2,7 @@ package com.example.robolectrictest.repository
 
 import com.example.robolectrictest.model.SearchResponse
 import com.example.robolectrictest.model.SearchResult
+import com.example.robolectrictest.presenter.RepositoryContract
 import io.reactivex.Observable
 import retrofit2.Response
 import kotlin.random.Random

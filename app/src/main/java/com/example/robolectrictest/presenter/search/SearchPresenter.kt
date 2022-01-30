@@ -1,9 +1,8 @@
 package com.example.robolectrictest.presenter.search
 
 import com.example.robolectrictest.model.SearchResponse
-import com.example.robolectrictest.repository.GitHubRepository
+import com.example.robolectrictest.presenter.RepositoryContract
 import com.example.robolectrictest.repository.GitHubRepositoryCallback
-import com.example.robolectrictest.repository.RepositoryContract
 import com.example.robolectrictest.scheduler.ISchedulerProvider
 import com.example.robolectrictest.scheduler.SearchSchedulerProvider
 import com.example.robolectrictest.view.ViewContract
@@ -44,7 +43,7 @@ internal class SearchPresenter internal constructor(
                     override fun onNext(searchResponse: SearchResponse) {
                         val searchResults = searchResponse.searchResults
                         val totalCount = searchResponse.totalCount
-                        if (searchResults!= null && totalCount != null) {
+                        if (searchResults != null && totalCount != null) {
                             viewContract.displaySearchResults(searchResults, totalCount)
                         } else {
                             viewContract.displayError(ERROR)
@@ -55,7 +54,7 @@ internal class SearchPresenter internal constructor(
                         viewContract.displayError(e.message ?: ERROR)
                     }
 
-                    override fun onComplete() { }
+                    override fun onComplete() {}
 
                 })
         )
@@ -82,8 +81,8 @@ internal class SearchPresenter internal constructor(
             val totalCount = searchResponse?.totalCount
             if (searchResults != null && totalCount != null) {
                 viewContract.displaySearchResults(
-                        searchResults,
-                        totalCount
+                    searchResults,
+                    totalCount
                 )
             } else {
                 viewContract.displayError(ERROR)

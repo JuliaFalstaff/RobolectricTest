@@ -3,7 +3,7 @@ package com.example.robolectrictest
 import com.example.robolectrictest.model.SearchResponse
 import com.example.robolectrictest.presenter.search.SearchPresenter
 import com.example.robolectrictest.repository.GitHubRepository
-import com.example.robolectrictest.stubs.SchedulerProviderStub
+import com.example.robolectrictest.presenter.stubs.SchedulerProviderStub
 import com.example.robolectrictest.view.search.ViewSearchContract
 import com.nhaarman.mockito_kotlin.inOrder
 import com.nhaarman.mockito_kotlin.times
