@@ -6,10 +6,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.robolectrictest.model.SearchResult
 import com.example.robolectrictest.presenter.RepositoryContract
 import com.example.robolectrictest.presenter.search.PresenterSearchContract
 import com.example.robolectrictest.presenter.search.SearchPresenter
+import com.example.robolectrictest.presenter.search.SearchViewModel
 import com.example.robolectrictest.repository.FakeGitHubRepository
 import com.example.robolectrictest.view.details.DetailsActivity
 import com.example.robolectrictest.view.search.SearchResultAdapter
@@ -155,7 +157,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDetach()
     }
 
     companion object {
