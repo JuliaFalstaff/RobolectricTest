@@ -1,6 +1,7 @@
 package com.example.robolectrictest.repository
 
 import com.example.robolectrictest.model.SearchResponse
+import io.reactivex.Observable
 import retrofit2.Response
 
 interface GitHubRepositoryCallback {
@@ -13,4 +14,9 @@ internal interface RepositoryContract {
         query: String,
         callback: GitHubRepositoryCallback
     )
+
+    //мы не передаем в новый метод никаких колбеков, так как мы работаем с потоком
+    fun searchGithub(
+        query: String
+    ): Observable<SearchResponse>
 }
