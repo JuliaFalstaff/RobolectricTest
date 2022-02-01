@@ -1,11 +1,14 @@
 package com.example.robolectrictest.presenter.search
 
 import com.example.robolectrictest.model.SearchResponse
-import com.example.robolectrictest.repository.GitHubRepository
+import com.example.robolectrictest.presenter.RepositoryContract
 import com.example.robolectrictest.repository.GitHubRepositoryCallback
-import com.example.robolectrictest.repository.RepositoryContract
+import com.example.robolectrictest.scheduler.ISchedulerProvider
+import com.example.robolectrictest.scheduler.SearchSchedulerProvider
 import com.example.robolectrictest.view.ViewContract
 import com.example.robolectrictest.view.search.ViewSearchContract
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import retrofit2.Response
 
 /**
@@ -19,14 +22,43 @@ import retrofit2.Response
 internal class SearchPresenter internal constructor(
     private val viewContract: ViewSearchContract,
     private val repository: RepositoryContract,
+    private val appSchedulerProvider: ISchedulerProvider = SearchSchedulerProvider()
 ) : PresenterSearchContract, GitHubRepositoryCallback {
 
     private var view: ViewContract? = null
+    private var compositeDisposable = CompositeDisposable()
 
     fun getView() = view
 
     override fun searchGitHub(searchQuery: String) {
-        viewContract.displayLoading(true)
+        //Dispose
+        compositeDisposable = CompositeDisposable()
+        compositeDisposable.add(
+            repository.searchGithub(searchQuery)
+                .subscribeOn(appSchedulerProvider.io())
+                .observeOn(appSchedulerProvider.ui())
+                .doOnSubscribe { viewContract.displayLoading(true) }
+                .doOnTerminate { viewContract.displayLoading(false) }
+                .subscribeWith(object : DisposableObserver<SearchResponse>() {
+                    override fun onNext(searchResponse: SearchResponse) {
+                        val searchResults = searchResponse.searchResults
+                        val totalCount = searchResponse.totalCount
+                        if (searchResults != null && totalCount != null) {
+                            viewContract.displaySearchResults(searchResults, totalCount)
+                        } else {
+                            viewContract.displayError(ERROR)
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                        viewContract.displayError(e.message ?: ERROR)
+                    }
+
+                    override fun onComplete() {}
+
+                })
+        )
+
         repository.searchGithub(searchQuery, this)
     }
 
@@ -38,6 +70,7 @@ internal class SearchPresenter internal constructor(
 
     override fun onDetach() {
         view = null
+        compositeDisposable.clear()
     }
 
     override fun handleGitHubResponse(response: Response<SearchResponse?>?) {
@@ -48,19 +81,23 @@ internal class SearchPresenter internal constructor(
             val totalCount = searchResponse?.totalCount
             if (searchResults != null && totalCount != null) {
                 viewContract.displaySearchResults(
-                        searchResults,
-                        totalCount
+                    searchResults,
+                    totalCount
                 )
             } else {
-                viewContract.displayError("Search results or total count are null")
+                viewContract.displayError(ERROR)
             }
         } else {
-            viewContract.displayError("Response is null or unsuccessful")
+            viewContract.displayError(ERROR)
         }
     }
 
     override fun handleGitHubError() {
         viewContract.displayLoading(false)
         viewContract.displayError()
+    }
+
+    companion object {
+        private const val ERROR = "Search results or total count are null"
     }
 }

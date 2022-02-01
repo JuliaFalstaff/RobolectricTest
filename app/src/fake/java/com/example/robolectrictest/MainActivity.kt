@@ -1,18 +1,18 @@
 package com.example.robolectrictest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.robolectrictest.model.SearchResult
+import com.example.robolectrictest.presenter.RepositoryContract
 import com.example.robolectrictest.presenter.search.PresenterSearchContract
 import com.example.robolectrictest.presenter.search.SearchPresenter
+import com.example.robolectrictest.presenter.search.SearchViewModel
 import com.example.robolectrictest.repository.FakeGitHubRepository
-import com.example.robolectrictest.repository.GitHubApi
-import com.example.robolectrictest.repository.GitHubRepository
-import com.example.robolectrictest.repository.RepositoryContract
 import com.example.robolectrictest.view.details.DetailsActivity
 import com.example.robolectrictest.view.search.SearchResultAdapter
 import com.example.robolectrictest.view.search.ViewSearchContract
@@ -24,14 +24,48 @@ import java.util.*
 class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     private val adapter = SearchResultAdapter()
-    private val presenter: PresenterSearchContract = SearchPresenter(this, createRepository())
+    private val viewModel: SearchViewModel by lazy {
+        ViewModelProvider(this).get(SearchViewModel::class.java)
+    }
+
     private var totalCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        presenter.onAttach(this)
         setUI()
+        viewModel.subscribeToLiveData().observe(this) { renderData(it) }
+    }
+
+    private fun renderData(screenState: AppState) {
+        when (screenState) {
+            is AppState.Working -> {
+                val searchResponse = screenState.searchResponse
+                val totalCount = searchResponse.totalCount
+                progressBar.visibility = View.GONE
+                with(totalCountTextView) {
+                    visibility = View.VISIBLE
+                    text =
+                        String.format(
+                            Locale.getDefault(),
+                            getString(R.string.results_count),
+                            totalCount
+                        )
+                }
+
+                if (totalCount != null) {
+                    this.totalCount = totalCount
+                }
+                searchResponse.searchResults?.let { adapter.updateResults(it) }
+            }
+            is AppState.Loading -> {
+                progressBar.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                progressBar.visibility = View.GONE
+                Toast.makeText(this, screenState.error.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setUI() {
@@ -53,7 +87,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = searchEditText.text.toString()
                 if (query.isNotBlank()) {
-                    presenter.searchGitHub(query)
+                    viewModel.searchGitHub(query)
                     return@OnEditorActionListener true
                 } else {
                     Toast.makeText(
@@ -72,7 +106,7 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
         searchButton.setOnClickListener {
             val query = searchEditText.text.toString()
             if (query.isNotBlank()) {
-                presenter.searchGitHub(query)
+                viewModel.searchGitHub(query)
             } else {
                 Toast.makeText(
                     this@MainActivity,
@@ -86,7 +120,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     private fun createRepository(): RepositoryContract = FakeGitHubRepository()
 
 
-
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -95,8 +128,8 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
     }
 
     override fun displaySearchResults(
-            searchResults: List<SearchResult>,
-            totalCount: Int
+        searchResults: List<SearchResult>,
+        totalCount: Int
     ) {
         with(totalCountTextView) {
             visibility = View.VISIBLE
@@ -124,7 +157,6 @@ class MainActivity : AppCompatActivity(), ViewSearchContract {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onDetach()
     }
 
     companion object {
