@@ -3,6 +3,7 @@ package com.example.robolectrictest.repository
 
 import com.example.robolectrictest.model.SearchResponse
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -21,4 +22,8 @@ internal interface GitHubApi {
     @Headers("Accept: application/vnd.github.mercy-preview+json")
     @GET("search/repositories")
     fun searchGithubRx(@Query("q") term: String?): Observable<SearchResponse>
+
+    @Headers("Accept: application/vnd.github.mercy-preview+json")
+    @GET("search/repositories")
+    fun searchGitHubAsync(@Query("q") term: String?): Deferred<SearchResponse>
 }

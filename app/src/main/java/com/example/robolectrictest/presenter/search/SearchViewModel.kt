@@ -11,8 +11,10 @@ import com.example.robolectrictest.repository.GitHubApi
 import com.example.robolectrictest.repository.GitHubRepository
 import com.example.robolectrictest.scheduler.ISchedulerProvider
 import com.example.robolectrictest.scheduler.SearchSchedulerProvider
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import kotlinx.coroutines.*
 import org.junit.internal.runners.ErrorReportingRunner
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -22,7 +24,7 @@ class SearchViewModel(
     private val repository: RepositoryContract = GitHubRepository(
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(GitHubApi::class.java)
     ),
@@ -31,37 +33,37 @@ class SearchViewModel(
     private val _liveData = MutableLiveData<AppState>()
     private val liveData: LiveData<AppState> = _liveData
     private var compositeDisposable = CompositeDisposable()
+    private val viewModelCoroutinesScope = CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, throwable ->
+        handleError(throwable)
+    })
+
+    private fun handleError(error: Throwable) {
+        _liveData.value = AppState.Error(Throwable(error.message ?: ERROR))
+    }
 
     fun subscribeToLiveData() = liveData
 
     fun searchGitHub(searchQuery: String) {
-        compositeDisposable = CompositeDisposable()
-        compositeDisposable.add(
-            repository.searchGithub(searchQuery)
-                .subscribeOn(appSchedulerProvider.io())
-                .observeOn(appSchedulerProvider.ui())
-                .doOnSubscribe { _liveData.postValue(AppState.Loading) }
-                .subscribeWith(object : DisposableObserver<SearchResponse>() {
-                    override fun onNext(searchResponse: SearchResponse) {
-                        val searchResults = searchResponse.searchResults
-                        val totalCount = searchResponse.totalCount
-                        if (searchResults != null && totalCount != null) {
-                            _liveData.postValue(AppState.Working(searchResponse))
-                        } else {
-                            _liveData.postValue(AppState.Error(Throwable(ERROR)))
-                        }
-                    }
+        _liveData.value = AppState.Loading
+        viewModelCoroutinesScope.launch {
+            val searchResponse = repository.searchGithubAsync(searchQuery)
+            val searchResults = searchResponse.searchResults
+            val totalCount = searchResponse.totalCount
+            if (searchResults != null && totalCount != null) {
+                _liveData.postValue(AppState.Working(searchResponse))
+            } else {
+                _liveData.postValue(AppState.Error(Throwable(ERROR)))
+            }
+        }
+    }
 
-                    override fun onError(e: Throwable) {
-                        _liveData.postValue(AppState.Error(Throwable(e.message ?: ERROR)))
-                    }
-
-                    override fun onComplete() {}
-                })
-        )
+    override fun onCleared() {
+        super.onCleared()
+        viewModelCoroutinesScope.coroutineContext.cancelChildren()
     }
 
     companion object {
         private const val ERROR = "Search results or total count are null"
+        private const val ERROR_RESPONSE = "Response is null or unsuccessful"
     }
 }
